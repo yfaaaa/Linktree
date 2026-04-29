@@ -1,206 +1,432 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <link rel="icon" type="image/jpg" href="src/pp.jpg">
+    <link rel="icon" type="image/jpg" href="src/profil.jpg">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Y</title>
-
+    <title>YFA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Courier New', Courier, monospace;
-        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            background: linear-gradient(135deg, #f4e1d2, #d9bf77);
-            color: #3c2f2f;
+            font-family: 'DM Mono', monospace;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: 100vh;
             overflow-x: hidden;
+            position: relative;
         }
 
-        .container {
-            max-width: 600px;
+        .bg {
+            position: fixed;
+            inset: 0;
+            background: url('src/pp.jpg') center center / cover no-repeat;
+            z-index: 0;
+        }
+
+        .bg::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(160deg, rgba(10,8,20,0.72) 0%, rgba(30,15,40,0.65) 40%, rgba(10,10,25,0.78) 100%);
+        }
+
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+            z-index: 1;
+        }
+        .orb-1 { width: 380px; height: 380px; background: rgba(180,120,255,0.18); top: -80px; right: -80px; }
+        .orb-2 { width: 300px; height: 300px; background: rgba(80,160,255,0.14); bottom: 60px; left: -60px; }
+        .orb-3 { width: 200px; height: 200px; background: rgba(255,180,100,0.10); top: 50%; left: 50%; transform: translate(-50%,-50%); }
+
+        .wrapper {
+            position: relative;
+            z-index: 2;
             width: 100%;
-            padding: 20px;
-            text-align: center;
+            max-width: 460px;
+            padding: 56px 24px 48px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .avatar-wrap {
+            position: relative;
+            margin-bottom: 24px;
+            animation: fadeUp 0.9s ease both;
+        }
+
+        .avatar-glow {
+            position: absolute;
+            inset: -8px;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, rgba(180,120,255,0.7), rgba(80,160,255,0.7), rgba(255,180,100,0.5), rgba(180,120,255,0.7));
+            animation: spinGlow 4s linear infinite;
+            filter: blur(4px);
+            z-index: 0;
+        }
+
+        @keyframes spinGlow { to { transform: rotate(360deg); } }
+
+        .avatar-ring {
+            position: relative;
+            z-index: 1;
+            width: 108px;
+            height: 108px;
+            border-radius: 50%;
+            padding: 3px;
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(6px);
+        }
+
+        .avatar-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            overflow: hidden;
+            background: linear-gradient(135deg, #a078c8, #5090d8);
+        }
+
+        .avatar-inner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
         }
 
         header {
-            padding: 40px 20px;
-            animation: fadeIn 1.5s ease-in-out;
-            display: flex;
-            flex-direction: column;
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeUp 0.9s 0.1s ease both;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            color: #ffffff;
+            text-shadow: 0 2px 24px rgba(180,120,255,0.4);
+            margin-bottom: 10px;
+        }
+
+        .typing-wrap {
+            display: inline-flex;
             align-items: center;
+            gap: 3px;
+            height: 20px;
         }
 
-        header h1 {
-            font-size: 2.8rem;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            color: #6b4e31;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        header p {
-            font-size: 1.1rem;
-            margin-top: 10px;
-            color: #4a3728;
+        .typing-text {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            color: rgba(220,200,255,0.75);
             white-space: nowrap;
             overflow: hidden;
-            border-right: 3px solid #6b4e31;
             width: 0;
-            animation: typing 4s steps(25) forwards infinite, blink 0.5s step-end infinite alternate;
-            animation-delay: 0s, 0s, 6s;
-            /* 4s typing + 2-3s delay */
+            animation: typeIn 3.9s steps(24) 0.9s forwards;
         }
 
-        @keyframes typing {
-            0% {
-                width: 0;
-            }
-
-            100% {
-                width: 25ch;
-            }
+        .cursor {
+            display: inline-block;
+            width: 1.5px;
+            height: 13px;
+            background: rgba(180,120,255,0.9);
+            animation: blink 0.75s step-end infinite;
+            flex-shrink: 0;
         }
 
-        @keyframes blink {
-            50% {
-                border-color: transparent;
-            }
-        }
+        @keyframes typeIn { to { width: 22ch; } }
+        @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0; } }
 
         .link-list {
+            width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            margin: 30px 0;
+            gap: 14px;
         }
+
+        /* Wrapper buat tooltip bisa overflow */
+        .link-wrap {
+            position: relative;
+            width: 100%;
+        }
+
+        /* Tooltip popup */
+        .tooltip {
+            position: absolute;
+            top: -42px;
+            left: 50%;
+            transform: translateX(-50%) translateY(6px);
+            background: rgba(20,14,35,0.92);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 0.65rem;
+            font-family: 'DM Mono', monospace;
+            letter-spacing: 0.1em;
+            color: rgba(255,255,255,0.85);
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 10;
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%) rotate(45deg);
+            width: 8px;
+            height: 8px;
+            background: rgba(20,14,35,0.92);
+            border-right: 1px solid rgba(255,255,255,0.18);
+            border-bottom: 1px solid rgba(255,255,255,0.18);
+        }
+
+        .link-wrap:hover .tooltip {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0px);
+        }
+
+        /* Per-color tooltip glow */
+        .link-wrap[data-color="spotify"] .tooltip   { border-color: rgba(29,185,84,0.4);  color: rgba(100,255,140,0.9); }
+        .link-wrap[data-color="whatsapp"] .tooltip  { border-color: rgba(37,211,102,0.4); color: rgba(100,255,140,0.9); }
+        .link-wrap[data-color="instagram"] .tooltip { border-color: rgba(225,48,108,0.4); color: rgba(255,140,180,0.9); }
+        .link-wrap[data-color="tiktok"] .tooltip    { border-color: rgba(255,255,255,0.3); color: rgba(220,220,255,0.9); }
 
         .link-item {
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 10px;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 15px;
-            border-radius: 10px;
+            gap: 14px;
+            padding: 15px 20px;
+            background: rgba(255,255,255,0.07);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.14);
+            border-radius: 50px;
             text-decoration: none;
-            color: #6b4e31;
-            font-size: 1.2rem;
-            font-weight: bold;
-            transition: transform 0.3s ease, background 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            color: rgba(255,255,255,0.9);
+            font-family: 'DM Mono', monospace;
+            font-size: 0.82rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            transition: all 0.32s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            opacity: 0;
+            transform: translateY(20px);
         }
+
+        /* Shimmer sweep */
+        .link-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.09), transparent);
+            transition: left 0.5s ease;
+            z-index: 1;
+        }
+
+        .link-item:hover::before { left: 140%; }
 
         .link-item:hover {
-            transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255,255,255,0.14);
+            border-color: rgba(255,255,255,0.32);
+            transform: translateY(-5px) scale(1.05);
+            box-shadow:
+                0 2px 0 rgba(255,255,255,0.12) inset,
+                0 16px 48px rgba(0,0,0,0.4),
+                0 6px 20px rgba(180,120,255,0.18);
         }
 
-        .link-item svg {
-            width: 30px;
-            height: 30px;
-            fill: #6b4e31;
-            filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.2));
+        .link-item:active {
+            transform: translateY(-1px) scale(0.98) !important;
+            transition: all 0.08s ease !important;
         }
+
+        .link-item.visible { animation: slideIn 0.55s ease forwards; }
+
+        .link-wrap[data-color="spotify"]   .link-item:hover { box-shadow: 0 2px 0 rgba(255,255,255,0.1) inset, 0 16px 48px rgba(29,185,84,0.35),   0 6px 24px rgba(29,185,84,0.25);  border-color: rgba(29,185,84,0.55); background: rgba(29,185,84,0.1); }
+        .link-wrap[data-color="whatsapp"]  .link-item:hover { box-shadow: 0 2px 0 rgba(255,255,255,0.1) inset, 0 16px 48px rgba(37,211,102,0.35),  0 6px 24px rgba(37,211,102,0.25); border-color: rgba(37,211,102,0.55); background: rgba(37,211,102,0.08); }
+        .link-wrap[data-color="instagram"] .link-item:hover { box-shadow: 0 2px 0 rgba(255,255,255,0.1) inset, 0 16px 48px rgba(225,48,108,0.35),  0 6px 24px rgba(225,48,108,0.25); border-color: rgba(225,48,108,0.55); background: rgba(225,48,108,0.08); }
+        .link-wrap[data-color="tiktok"]    .link-item:hover { box-shadow: 0 2px 0 rgba(255,255,255,0.1) inset, 0 16px 48px rgba(255,255,255,0.2),  0 6px 24px rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.1); }
+
+        .icon-wrap {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .link-item:hover .icon-wrap {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.35);
+            transform: scale(1.1) rotate(-5deg);
+        }
+        .icon-wrap svg { width: 16px; height: 16px; fill: rgba(255,255,255,0.85); }
+
+        .link-label { flex: 1; position: relative; z-index: 1; }
+
+        /* Arrow muncul saat hover */
+        .link-arrow {
+            font-size: 0.85rem;
+            opacity: 0;
+            transform: translateX(-6px);
+            transition: all 0.25s ease;
+            color: rgba(255,255,255,0.6);
+            position: relative;
+            z-index: 1;
+        }
+        .link-item:hover .link-arrow {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            margin: 36px 0 0;
+            opacity: 0;
+            animation: fadeUp 0.5s 1.3s ease both;
+        }
+
+        .divider-line { flex: 1; height: 1px; background: rgba(255,255,255,0.12); }
+        .divider-diamond { width: 5px; height: 5px; background: rgba(180,120,255,0.7); transform: rotate(45deg); flex-shrink: 0; }
 
         footer {
-            text-align: center;
-            padding: 20px;
-            background: #6b4e31;
-            color: #f4e1d2;
-            width: 100%;
-            margin-top: auto;
+            margin-top: 28px;
+            font-size: 0.62rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.3);
+            opacity: 0;
+            animation: fadeUp 0.5s 1.5s ease both;
+            padding-bottom: 8px;
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
+        @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes slideIn { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
 
         @media (max-width: 480px) {
-            header h1 {
-                font-size: 2rem;
-            }
-
-            header p {
-                font-size: 1rem;
-                width: 0;
-                animation: typing 5s steps(22) forwards infinite, blink 0.20s step-end infinite alternate;
-                animation-delay: 0s, 0s, 20s;
-                /* 4s typing + 2-3s delay */
-            }
-
-            .link-item {
-                font-size: 1rem;
-                padding: 12px;
-            }
-
-            .link-item svg {
-                width: 25px;
-                height: 25px;
-            }
+            .wrapper { padding: 48px 20px 40px; }
+            h1 { font-size: 1.9rem; }
+            .link-item { padding: 13px 18px; }
         }
     </style>
 </head>
-
 <body>
-    <div class="container">
+    <div class="bg"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <div class="wrapper">
+        <div class="avatar-wrap">
+            <div class="avatar-glow"></div>
+            <div class="avatar-ring">
+                <div class="avatar-inner">
+                    <img src="src/profil1.jpg" alt="YFA">
+                </div>
+            </div>
+        </div>
+
         <header>
             <h1>YFA</h1>
-            <p>yahya fahmi abdillah.</p>
+            <div class="typing-wrap">
+                <span class="typing-text">yahya fahmi abdillah</span>
+                <span class="cursor"></span>
+            </div>
         </header>
 
         <div class="link-list">
-            <a href="https://open.spotify.com/user/31iypeidhohrpobmdx6hljwyuaia?si=ezJCNwksS32yK_1l2LahqQ&fbclid=PAZXh0bgNhZW0CMTEAAae4RrOSjbwSPaKGKQd2JM87ucZX_6FS2GPeAmkoAh02yuUC5_Nk28lF5OKb9g_aem_F9HYxTwxfsO4b9W5Y-X5og&nd=1&dlsi=e7e81a1f9ace4309"
-                target="_blank" class="link-item" aria-label="Spotify">
-                <svg viewBox="0 0 24 24">
-                    <path
-                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm3.61 14.19c-.23.37-.64.59-1.04.59-.31 0-.61-.09-.87-.26-1.09-.68-2.46-1.04-3.84-1.04-1.07 0-2.12.23-3.07.67-.36.16-.76.09-1.04-.18-.28-.27-.37-.67-.22-1.03.92-.51 1.97-.77 3.03-.77 1.61 0 3.18.41 4.56 1.19.36.21.81.17 1.11-.09.3-.26.39-.67.22-1.03zm1.81-2.37c-.28.46-.78.73-1.28.73-.38 0-.75-.11-1.07-.32-1.34-.83-3.02-1.27-4.71-1.27-1.31 0-2.61.28-3.78.82-.44.2-.93.11-1.27-.22-.34-.33-.45-.82-.27-1.26.99-.62 2.12-.94 3.26-.94 1.97 0 3.89.5 5.59 1.45.44.25.99.2 1.36-.11.37-.31.48-.82.27-1.26zm2.16-2.84c-.34.56-.95.89-1.56.89-.46 0-.91-.14-1.3-.39-1.62-1.01-3.65-1.54-5.69-1.54-1.59 0-3.16.34-4.58 1-.53.24-1.13.13-1.54-.27-.41-.4-.54-1-.32-1.53 1.2-.75 2.57-1.14 3.95-1.14 2.38 0 4.71.61 6.77 1.76.53.3 1.2.24 1.65-.14.45-.38.59-.99.34-1.53z" />
-                </svg>
-                Spotify
-            </a>
-            <a href="https://wa.me/62883842815369" target="_blank" class="link-item" aria-label="WhatsApp">
-                <svg viewBox="0 0 24 24">
-                    <path
-                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.36 14.83c-.24.69-.87 1.23-1.58 1.44-.71.21-1.46.11-2.22-.15-.76-.26-1.47-.67-2.16-1.14-.69-.47-1.31-1.01-1.85-1.62-.54-.61-.99-1.26-1.36-1.95-.37-.69-.62-1.41-.74-2.14-.12-.73.01-1.45.34-2.09.33-.64.84-1.14 1.47-1.39.24-.09.49-.04.68.12.19.16.34.39.43.65.09.26.14.54.14.82 0 .28-.05.55-.14.81-.09.26-.22.51-.37.74-.15.23-.32.45-.49.67-.17.22-.34.44-.49.67-.15.23-.28.47-.39.72-.11.25-.18.51-.21.78-.03.27.01.54.13.79.12.25.31.47.54.65.23.18.5.31.81.39.31.08.64.08.96 0 .32-.08.61-.23.86-.44.25-.21.46-.47.62-.77.16-.3.28-.62.36-.95.08-.33.11-.67.08-1.01-.03-.34-.13-.67-.29-.98-.16-.31-.38-.59-.65-.82-.27-.23-.58-.41-.92-.54-.34-.13-.7-.21-1.07-.24-.37-.03-.75-.01-1.12.06-.37.07-.73.19-1.07.36-.34.17-.65.39-.92.66-.27.27-.49.59-.66.92-.17.33-.29.69-.36 1.07-.07.38-.06.77.01 1.14.07.37.19.73.36 1.07.17.34.39.65.66.92.27.27.59.49.92.66.33.17.69.29 1.07.36.38.07.77.06 1.14-.01.37-.07.73-.19 1.07-.36.34-.17.65-.39.92-.66.27-.27.49-.59.66-.92z" />
-                </svg>
-                WhatsApp
-            </a>
-            <a href="https://www.instagram.com/yahyafahmiabdillah" target="_blank" class="link-item"
-                aria-label="Instagram">
-                <svg viewBox="0 0 24 24">
-                    <path
-                        d="M12 2.163c3.204 0 3.584.012 4.85.07 1.366.062 2.633.326 3.608 1.301.975.975 1.24 2.242 1.301 3.608.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.062 1.366-.326 2.633-1.301 3.608-.975.975-2.242 1.24-3.608 1.301-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.366-.062-2.633-.326-3.608-1.301-.975-.975-1.24-2.242-1.301-3.608-.058-1.266-.07-1.646-.07-4.85s.012-3.584.07-4.85c.062-1.366.326-2.633 1.301-3.608.975-.975 2.242-1.24 3.608-1.301 1.266-.058 1.646-.07 4.85-.07zm0-2.163c-3.259 0-3.667.014-4.947.072-1.468.066-2.916.362-4.03 1.476-1.114 1.114-1.41 2.562-1.476 4.03-.058 1.28-.072 1.688-.072 4.947s.014 3.667.072 4.947c.066 1.468.362 2.916 1.476 4.03 1.114 1.114 2.562 1.41 4.03 1.476 1.28.058 1.688.072 4.947.072s3.667-.014 4.947-.072c1.468-.066 2.916-.362 4.03-1.476 1.114-1.114 1.41-2.562 1.476-4.03.058-1.28.072-1.688.072-4.947s-.014-3.667-.072-4.947c-.066-1.468-.362-2.916-1.476-4.03-1.114-1.114-2.562-1.41-4.03-1.476-1.28-.058-1.688-.072-4.947-.072zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.791-4-4s1.791-4 4-4 4 1.791 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.441s.645 1.441 1.441 1.441 1.441-.645 1.441-1.441-.645-1.441-1.441-1.441z" />
-                </svg>
-                Instagram
-            </a>
-            <a href="https://www.tiktok.com/@yfae31?is_from_webapp=1&sender_device=pc" target="_blank" class="link-item"
-                aria-label="TikTok">
-                <svg viewBox="0 0 24 24">
-                    <path
-                        d="M12 2C6.48 2 2 6.48 2 12c0 4.87 3.64 8.9 8.37 9.8v-6.92H8.07v-2.88h2.3V9.41c0-2.27 1.35-3.53 3.42-3.53.99 0 2.02.18 2.02.18v2.22h-1.14c-1.12 0-1.47.7-1.47 1.41v1.69h2.5l-.4 2.88h-2.1v6.92C18.36 20.9 22 16.87 22 12c0-5.52-4.48-10-10-10z" />
-                </svg>
-                TikTok
-            </a>
+            <div class="link-wrap" data-color="spotify">
+                <div class="tooltip">Buka Spotify ↗</div>
+                <a href="https://open.spotify.com/user/31iypeidhohrpobmdx6hljwyuaia?si=ezJCNwksS32yK_1l2LahqQ&fbclid=PAZXh0bgNhZW0CMTEAAae4RrOSjbwSPaKGKQd2JM87ucZX_6FS2GPeAmkoAh02yuUC5_Nk28lF5OKb9g_aem_F9HYxTwxfsO4b9W5Y-X5og&nd=1&dlsi=e7e81a1f9ace4309"
+                    target="_blank" class="link-item">
+                    <div class="icon-wrap">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424a.623.623 0 01-.857.207c-2.348-1.435-5.304-1.76-8.785-.964a.623.623 0 11-.277-1.215c3.809-.87 7.076-.496 9.712 1.115a.622.622 0 01.207.857zm1.223-2.722a.78.78 0 01-1.072.257C13.857 12.075 10.3 11.5 7.205 12.412a.781.781 0 01-.453-1.493c3.519-1.068 7.49-.55 10.35 1.111a.78.78 0 01.257 1.072zm.105-2.835C14.692 9.08 9.375 8.906 6.297 9.81a.937.937 0 11-.543-1.794c3.527-1.069 9.396-.862 13.097 1.37a.937.937 0 01-.937 1.481z"/></svg>
+                    </div>
+                    <span class="link-label">Spotify</span>
+                    <span class="link-arrow">→</span>
+                </a>
+            </div>
+
+            <div class="link-wrap" data-color="whatsapp">
+                <div class="tooltip">Chat di WhatsApp ↗</div>
+                <a href="https://wa.me/62883842815369" target="_blank" class="link-item">
+                    <div class="icon-wrap">
+                        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                    </div>
+                    <span class="link-label">WhatsApp</span>
+                    <span class="link-arrow">→</span>
+                </a>
+            </div>
+
+            <div class="link-wrap" data-color="instagram">
+                <div class="tooltip">Follow di Instagram ↗</div>
+                <a href="https://www.instagram.com/yahyafahmiabdillah" target="_blank" class="link-item">
+                    <div class="icon-wrap">
+                        <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.366.062 2.633.326 3.608 1.301.975.975 1.24 2.242 1.301 3.608.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.062 1.366-.326 2.633-1.301 3.608-.975.975-2.242 1.24-3.608 1.301-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.366-.062-2.633-.326-3.608-1.301-.975-.975-1.24-2.242-1.301-3.608-.058-1.266-.07-1.646-.07-4.85s.012-3.584.07-4.85c.062-1.366.326-2.633 1.301-3.608.975-.975 2.242-1.24 3.608-1.301 1.266-.058 1.646-.07 4.85-.07zm0-2.163c-3.259 0-3.667.014-4.947.072-1.468.066-2.916.362-4.03 1.476-1.114 1.114-1.41 2.562-1.476 4.03-.058 1.28-.072 1.688-.072 4.947s.014 3.667.072 4.947c.066 1.468.362 2.916 1.476 4.03 1.114 1.114 2.562 1.41 4.03 1.476 1.28.058 1.688.072 4.947.072s3.667-.014 4.947-.072c1.468-.066 2.916-.362 4.03-1.476 1.114-1.114 1.41-2.562 1.476-4.03.058-1.28.072-1.688.072-4.947s-.014-3.667-.072-4.947c-.066-1.468-.362-2.916-1.476-4.03-1.114-1.114-2.562-1.41-4.03-1.476-1.28-.058-1.688-.072-4.947-.072zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.791-4-4s1.791-4 4-4 4 1.791 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.441s.645 1.441 1.441 1.441 1.441-.645 1.441-1.441-.645-1.441-1.441-1.441z"/></svg>
+                    </div>
+                    <span class="link-label">Instagram</span>
+                    <span class="link-arrow">→</span>
+                </a>
+            </div>
+
+            <div class="link-wrap" data-color="tiktok">
+                <div class="tooltip">Tonton di TikTok ↗</div>
+                <a href="https://www.tiktok.com/@yfae31?is_from_webapp=1&sender_device=pc" target="_blank" class="link-item">
+                    <div class="icon-wrap">
+                        <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.3 6.3 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V9.05a8.17 8.17 0 004.78 1.52V7.13a4.85 4.85 0 01-1.01-.44z"/></svg>
+                    </div>
+                    <span class="link-label">TikTok</span>
+                    <span class="link-arrow">→</span>
+                </a>
+            </div>
         </div>
+
+        <div class="divider">
+            <div class="divider-line"></div>
+            <div class="divider-diamond"></div>
+            <div class="divider-line"></div>
+        </div>
+
         <footer>
-            <p>&copy; 2025. All Rights Reserved.</p>
+            <p>© 2026 — all rights reserved</p>
         </footer>
     </div>
-</body>
 
+    <script>
+        document.querySelectorAll('.link-item').forEach((el, i) => {
+            setTimeout(() => el.classList.add('visible'), 350 + i * 110);
+        });
+    </script>
+</body>
 </html>
